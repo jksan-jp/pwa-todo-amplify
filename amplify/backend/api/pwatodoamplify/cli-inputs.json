@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "pwatodoamplify",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "API_KEY",
+      "expirationTime": 7
+    }
+  }
+}

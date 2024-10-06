@@ -1,5 +1,9 @@
 import React from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';  // Import Amplify UI styles
+
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/api'
 import { listTodos } from './graphql/queries';
@@ -14,8 +18,9 @@ interface Todo {
   completed: boolean;
 }
 
-function App() {
+const TodoApp: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const { signOut } = useAuthenticator();
 
   useEffect(() => {
     fetchTodos();
@@ -41,6 +46,7 @@ function App() {
   return (
     <div>
       <h1>My TODO App</h1>
+      <button onClick={signOut}>Sign Out</button>
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
@@ -61,5 +67,37 @@ function App() {
     </div>
   );
 }
+
+// Component to handle private routes
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+  const { route } = useAuthenticator((context) => [context.route]);
+  console.log(route)
+  if (route !== 'authenticated') {
+    return <Navigate to="/" />;
+  }
+  
+  return children;
+};
+
+const App: React.FC = () => {
+
+  return (
+    <Authenticator.Provider>
+      <Router>
+        <Routes>
+          {/* Authenticator handles login/signup */}
+          <Route path="/signin"  element={<Authenticator />} />
+
+          {/* Protect the TODO app route */}
+          <Route path="/todo" element={
+            <PrivateRoute>
+              <TodoApp />
+            </PrivateRoute>
+          } />
+        </Routes>
+      </Router>
+    </Authenticator.Provider>
+  );
+};
 
 export default App;

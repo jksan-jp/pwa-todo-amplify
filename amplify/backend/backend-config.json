@@ -1,4 +1,10 @@
 {
+  "analytics": {
+    "pwatodoamplify": {
+      "providerPlugin": "awscloudformation",
+      "service": "Pinpoint"
+    }
+  },
   "api": {
     "pwatodoamplify": {
       "dependsOn": [],
